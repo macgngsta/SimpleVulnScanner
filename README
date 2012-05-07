@@ -1,0 +1,15 @@
+# Simple Vulnerability Scanner (v0.0.1)
+
+This idea was the result of having to complete a final project for Penetration Testing and Vulnerability Analysis.
+
+The concept is simple, take a folder full of code and perform static analysis to find security vulnerabilities.
+
+The scope of this project will be pretty narrow. I'm going to specifically focus on SQL injection and operate with the language php and examine for the majority Wordpress Plugins.
+
+The workflow:
+* read in the folder of code
+* run through all the code/files and update relationships in a graph database (neo4j)
+* run queries on the database looking for specific signatures
+* print a report of all findings
+
+http://pentest.cryptocity.net/
