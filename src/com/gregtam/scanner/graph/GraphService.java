@@ -5,8 +5,15 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.impl.util.FileUtils;
+
+import com.gregtam.scanner.graph.GraphConstants.RelType;
+import com.gregtam.scanner.model.DataObject;
 
 public class GraphService
 {
@@ -15,11 +22,15 @@ public class GraphService
 
 	private static GraphService _instance;
 	private GraphDatabaseService graphDb;
+	private Index<Node> nodeIndex;
+
+	private Node rootNode;
 
 	private GraphService()
 	{
 		logger.debug("starting graphdb");
 		graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
+		nodeIndex = graphDb.index().forNodes("nodes");
 		registerShutdownHook(graphDb);
 	}
 
@@ -59,6 +70,52 @@ public class GraphService
 	{
 		logger.debug("shutting down graphdb");
 		graphDb.shutdown();
+	}
+
+	public void createRoot(DataObject d)
+	{
+		Transaction tx = graphDb.beginTx();
+		try
+		{
+			rootNode = createAndIndex(d);
+			logger.debug("created root node");
+			tx.success();
+		}
+		finally
+		{
+			tx.finish();
+		}
+	}
+
+	// all these functions need to be wrapped by a transaction
+
+	private Node createAndIndex(DataObject d)
+	{
+		Node node = graphDb.createNode();
+		String key = GraphUtil.createKey(d);
+		node.setProperty(GraphConstants.KEY_NAME, key);
+		nodeIndex.add(node, GraphConstants.KEY_NAME, key);
+
+		return node;
+	}
+
+	private Node findNode(DataObject d)
+	{
+		Node foundNode = nodeIndex.get(GraphConstants.KEY_NAME,
+				GraphUtil.createKey(d)).getSingle();
+
+		if (foundNode == null)
+		{
+			logger.debug("could not find");
+		}
+
+		return foundNode;
+	}
+
+	private Relationship createRelationship(Node n1, Node n2, RelType r)
+	{
+		Relationship rel = n1.createRelationshipTo(n2, r);
+		return rel;
 	}
 
 	private static void registerShutdownHook(final GraphDatabaseService graphDb)
