@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.gregtam.scanner.util.FileObject;
+import com.gregtam.scanner.model.FileObject;
 import com.gregtam.scanner.util.ValidationUtil;
 
 public class FileLookup

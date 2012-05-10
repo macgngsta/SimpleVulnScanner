@@ -4,8 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 
 import net.kuruvila.php.parser.PhpLexer;
 import net.kuruvila.php.parser.PhpParser;
@@ -20,15 +18,24 @@ import org.antlr.runtime.tree.TreeAdaptor;
 import org.apache.log4j.Logger;
 
 import com.gregtam.scanner.exception.ParseException;
-import com.gregtam.scanner.graph.GraphConstants;
 import com.gregtam.scanner.graph.GraphService;
 import com.gregtam.scanner.model.DataObject;
-import com.gregtam.scanner.model.InterestingInfo;
-import com.gregtam.scanner.util.FileObject;
+import com.gregtam.scanner.model.FileObject;
+import com.gregtam.scanner.model.MetaData;
+import com.gregtam.scanner.work.ITask;
+import com.gregtam.scanner.work.IncludesTask;
 
 public class PhpAntlrParser
 {
 	static Logger logger = Logger.getLogger(GraphService.class.getName());
+
+	static final TreeAdaptor adaptor = new CommonTreeAdaptor()
+	{
+		public Object create(Token payload)
+		{
+			return new PhpAST(payload);
+		}
+	};
 
 	public PhpAntlrParser()
 	{
@@ -37,12 +44,13 @@ public class PhpAntlrParser
 
 	public void parse(FileObject fo) throws ParseException
 	{
+
 		if (fo != null)
 		{
 			try
 			{
 
-				ANTLRFileStream fs = new ANTLRFileStream(fo.getPath());
+				ANTLRFileStream fs = new ANTLRFileStream(fo.getAbsPath());
 				if (fs.size() > 0)
 				{
 
@@ -54,50 +62,138 @@ public class PhpAntlrParser
 					grammar.setTreeAdaptor(adaptor);
 					PhpParser.prog_return content = grammar.prog();
 
-					CommonTree tree = (CommonTree) content.getTree();
+					CommonTree fullTree = (CommonTree) content.getTree();
 
-					// globalSb = new StringBuilder();
-					// printTree(tree, 10);
-					parseTree(tree);
+					MetaData m = new MetaData();
+					// populate with relevent data
+					m.setFileName(fo.getName());
 
-					DataProcessor dp = new DataProcessor();
-					List<DataObject> myData = new ArrayList<DataObject>();
-
-					// build a map of all the tokens
-					Map<Integer, InterestingInfo> tMap = PhpUtil.getInstance()
-							.getAllTokens();
-
-					if (tMap != null && !tMap.isEmpty())
+					String relPath = fo.getRelPath();
+					if (relPath.endsWith(fo.getName()))
 					{
-						TreeSet<Integer> keys = new TreeSet<Integer>(
-								tMap.keySet());
-
-						for (Integer k : keys)
-						{
-							if (k != null)
-							{
-								InterestingInfo info = tMap.get(k);
-								// logger.debug(info);
-								// look for variables
-								DataObject data = dp.processToken(info);
-
-								if (data != null
-										&& data.getType() != GraphConstants.TYPE_INVALID)
-								{
-									data.setFileName(fo.getName());
-									myData.add(data);
-								}
-							}
-						}
+						m.setRelativePath(relPath.substring(0,
+								relPath.indexOf(fo.getName())));
+					}
+					else
+					{
+						m.setRelativePath(relPath);
 					}
 
-					if (myData != null && !myData.isEmpty())
-					{
-						for (DataObject d : myData)
-						{
-							logger.debug(d);
-						}
-					}
+					ITask startTask = new IncludesTask(fullTree, m);
+					startTask.process();
+
+					// // the algorithm here is to prune by high level items
+					// // function/class, this will leave the global code
+					// List<CommonTree> classes = new ArrayList<CommonTree>();
+					// CommonTree classPruned = pruneByToken(fullTree, 0,
+					// classes,
+					// "class");
+					//
+					// // function
+					// List<CommonTree> functions = new ArrayList<CommonTree>();
+					// CommonTree funcPruned = pruneByToken(classPruned, 0,
+					// functions, "function");
+					//
+					// // operator
+					// List<CommonTree> operators = new ArrayList<CommonTree>();
+					// CommonTree opPruned = pruneByToken(funcPruned, 0,
+					// operators, "=");
+					//
+					// // session variables
+					// List<CommonTree> sesVars = new ArrayList<CommonTree>();
+					// CommonTree sesVarPruned = pruneByToken(opPruned, 0,
+					// sesVars, "[");
+					//
+					// // variables
+					// List<CommonTree> variables = new ArrayList<CommonTree>();
+					// CommonTree theRest = pruneByToken(sesVarPruned, 0,
+					// variables, "$");
+
+					//
+					// List<CommonTree> myVariables = findVariables(tree);
+					//
+					// for (CommonTree t : myVariables)
+					// {
+					// logger.debug(getVariableName(t));
+					//
+					// logger.debug(t.toStringTree());
+					// }
+
+					// logger.debug(myVariables);
+
+					//
+					// // globalSb = new StringBuilder();
+					// printTree(tree, 1, "");
+					// // parseTree(tree);
+					//
+					// PhpDataProcessor dp = new PhpDataProcessor();
+					//
+					// // build a map of all the tokens
+					// Map<Integer, InterestingInfo> tMap =
+					// PhpUtil.getInstance()
+					// .getAllTokens();
+					//
+					// if (tMap != null && !tMap.isEmpty())
+					// {
+					// TreeSet<Integer> keys = new TreeSet<Integer>(
+					// tMap.keySet());
+					//
+					// // there is some issue - have to do it twice
+					// // process primitive types
+					// for (Integer k : keys)
+					// {
+					// if (k != null)
+					// {
+					// InterestingInfo info = tMap.get(k);
+					// // logger.debug(info);
+					// // look for variables
+					// DataObject data = dp.processForPrimitive(info);
+					//
+					// if (data != null
+					// && data.getType() != GraphConstants.TYPE_INVALID)
+					// {
+					//
+					// data = setFileInformation(data, fo);
+					//
+					// // check to see if its a quick surface
+					// // vector
+					// data.setPossibleAttackVector(SurfaceVectorUtil
+					// .isPossibleSurfaceVector(data
+					// .getName()));
+					//
+					// myData.add(data);
+					// }
+					// }
+					// }
+					//
+					// // process variables
+					// for (Integer k : keys)
+					// {
+					// if (k != null)
+					// {
+					// InterestingInfo info = tMap.get(k);
+					// // logger.debug(info);
+					// // look for variables
+					// DataObject data = dp
+					// .processForVariablesFunctions(info);
+					//
+					// if (data != null
+					// && data.getType() != GraphConstants.TYPE_INVALID)
+					// {
+					//
+					// data = setFileInformation(data, fo);
+					//
+					// // check to see if its a quick surface
+					// // vector
+					// data.setPossibleAttackVector(SurfaceVectorUtil
+					// .isPossibleSurfaceVector(data
+					// .getName()));
+					//
+					// myData.add(data);
+					// }
+					// }
+					// }
+					// }
 
 				}
 				else
@@ -124,6 +220,125 @@ public class PhpAntlrParser
 				throw new ParseException("rule not recognized: " + e);
 			}
 		}
+
+		// clean up for the next file
+		// cleanUpForNextFile();
+
+		// we've now created all the data objects
+		// need to insert into our db
+		// return myData;
+	}
+
+	private void cleanUpForNextFile()
+	{
+		// clear the map that contains tokens read from file
+		// the used token map gets auto recreated
+		PhpUtil.getInstance().clear();
+	}
+
+	private CommonTree pruneByToken(CommonTree t, int index,
+			List<CommonTree> c, String sToken)
+	{
+		if (t != null)
+		{
+			String token = t.toString();
+			if (token.equalsIgnoreCase(sToken))
+			{
+				c.add(t);
+				CommonTree s = (CommonTree) t.getParent();
+				s.deleteChild(index);
+
+				pruneByToken(s, 0, c, sToken);
+			}
+
+			for (int i = 0; i < t.getChildCount(); i++)
+			{
+				pruneByToken((CommonTree) t.getChild(i), i, c, sToken);
+			}
+		}
+
+		return t;
+	}
+
+	private void findAll(CommonTree t, List<CommonTree> v, List<CommonTree> f,
+			List<CommonTree> c)
+	{
+
+		String token = t.toString();
+
+		if (t != null)
+		{
+
+			for (int i = 0; i < t.getChildCount(); i++)
+			{
+				if (token.equalsIgnoreCase("[") || token.equalsIgnoreCase("$"))
+				{
+					v.add(t);
+				}
+				else if (token.equalsIgnoreCase("function")
+						|| token.equalsIgnoreCase("="))
+				{
+					f.add(t);
+				}
+				else if (token.equalsIgnoreCase("class"))
+				{
+					c.add(t);
+				}
+
+				findAll((CommonTree) t.getChild(i), v, f, c);
+			}
+		}
+	}
+
+	private List<CommonTree> findVariables(CommonTree t)
+	{
+		List<CommonTree> variables = new ArrayList<CommonTree>();
+
+		if (t.toString().equalsIgnoreCase("[")
+				|| t.toString().equalsIgnoreCase("$"))
+		{
+			variables.add(t);
+		}
+		else
+		{
+			for (int i = 0; i < t.getChildCount(); i++)
+			{
+				variables.addAll(findVariables((CommonTree) t.getChild(i)));
+			}
+		}
+
+		return variables;
+	}
+
+	private String getVariableName(CommonTree t)
+	{
+		StringBuilder realName = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
+		String temp = getVariableName(t, sb);
+
+		if (t != null)
+		{
+			realName.append(t.toString());
+		}
+
+		realName.append(temp);
+
+		return realName.toString();
+	}
+
+	private String getVariableName(CommonTree t, StringBuilder sb)
+	{
+		if (t != null)
+		{
+			for (int i = 0; i < t.getChildCount(); i++)
+			{
+				sb.append(t.getChild(i).toString());
+				getVariableName((CommonTree) t.getChild(i), sb);
+			}
+
+		}
+
+		return sb.toString();
 	}
 
 	private void parseTree(CommonTree t)
@@ -137,27 +352,56 @@ public class PhpAntlrParser
 		}
 	}
 
-	private void printTree(CommonTree t, int indent)
+	private void printTree(PhpAST t, int indent, String test)
 	{
 		if (t != null)
 		{
 			StringBuffer sb = new StringBuffer(indent);
+
 			for (int i = 0; i < indent; i++)
 				sb = sb.append("   ");
+
 			for (int i = 0; i < t.getChildCount(); i++)
 			{
-				logger.debug((sb.toString() + t.getChild(i).toString()));
-				printTree((CommonTree) t.getChild(i), indent + 1);
+				logger.debug((sb.toString() + test + ":" + t.getChild(i)
+						.toString()));
+
+				if (t.getChild(i).toString().equalsIgnoreCase("function"))
+				{
+					printTree((PhpAST) t.getChild(i), indent + 2, test + "f");
+				}
+				else if (t.getChild(i).toString().equalsIgnoreCase("$"))
+				{
+					printTree((PhpAST) t.getChild(i), indent + 2, test + "v");
+				}
+				else
+				{
+					printTree((PhpAST) t.getChild(i), indent + 2, test);
+				}
+
+				//
 			}
 		}
 	}
 
-	static final TreeAdaptor adaptor = new CommonTreeAdaptor()
+	private DataObject setFileInformation(DataObject dObj, FileObject fo)
 	{
-		public Object create(Token payload)
+		if (dObj != null && fo != null)
 		{
-			return new PhpAST(payload);
-		}
-	};
+			dObj.setFileName(fo.getName());
 
+			String relPath = fo.getRelPath();
+			if (relPath.endsWith(fo.getName()))
+			{
+				dObj.setRelativePath(relPath.substring(0,
+						relPath.indexOf(fo.getName())));
+			}
+			else
+			{
+				dObj.setRelativePath(relPath);
+			}
+		}
+
+		return dObj;
+	}
 }

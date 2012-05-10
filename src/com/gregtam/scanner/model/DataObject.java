@@ -4,10 +4,86 @@ import com.gregtam.scanner.graph.GraphConstants;
 
 public class DataObject
 {
+	// type of object
 	private int type;
+
+	// the key to this var
 	private String name;
+
+	private String relativePath;
+
+	// the file its in
 	private String fileName;
+
+	private int line;
+	// location gives us line number
 	private String location;
+
+	private boolean isPossibleAttackVector;
+
+	// full name will be the key
+
+	public DataObject()
+	{
+		this.type = GraphConstants.TYPE_INVALID;
+		this.name = "";
+		this.relativePath = "";
+		this.fileName = "";
+		this.line = 0;
+		this.location = "";
+		this.isPossibleAttackVector = false;
+	}
+
+	/**
+	 * @return the relativePath
+	 */
+	public String getRelativePath()
+	{
+		return relativePath;
+	}
+
+	/**
+	 * @param relativePath
+	 *            the relativePath to set
+	 */
+	public void setRelativePath(String relativePath)
+	{
+		this.relativePath = relativePath;
+	}
+
+	/**
+	 * @return the line
+	 */
+	public int getLine()
+	{
+		return line;
+	}
+
+	/**
+	 * @param line
+	 *            the line to set
+	 */
+	public void setLine(int line)
+	{
+		this.line = line;
+	}
+
+	/**
+	 * @return the isPossibleAttackVector
+	 */
+	public boolean isPossibleAttackVector()
+	{
+		return isPossibleAttackVector;
+	}
+
+	/**
+	 * @param isPossibleAttackVector
+	 *            the isPossibleAttackVector to set
+	 */
+	public void setPossibleAttackVector(boolean isPossibleAttackVector)
+	{
+		this.isPossibleAttackVector = isPossibleAttackVector;
+	}
 
 	/**
 	 * @return the location
@@ -26,17 +102,6 @@ public class DataObject
 		this.location = location;
 	}
 
-	private boolean modifiesChild;
-
-	public DataObject()
-	{
-		this.type = GraphConstants.TYPE_INVALID;
-		this.name = "";
-		this.fileName = "";
-		this.modifiesChild = false;
-		this.location = "";
-	}
-
 	/**
 	 * @return the fileName
 	 */
@@ -52,33 +117,6 @@ public class DataObject
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
-	}
-
-	/**
-	 * @return the modifiesChild
-	 */
-	public boolean isModifiesChild()
-	{
-		return modifiesChild;
-	}
-
-	/**
-	 * @param modifiesChild
-	 *            the modifiesChild to set
-	 */
-	public void setModifiesChild(boolean modifiesChild)
-	{
-		this.modifiesChild = modifiesChild;
-	}
-
-	public boolean isModify()
-	{
-		return modifiesChild;
-	}
-
-	public void setModify(boolean isModify)
-	{
-		this.modifiesChild = isModify;
 	}
 
 	public int getType()
@@ -113,10 +151,13 @@ public class DataObject
 		int result = 1;
 		result = prime * result
 				+ ((fileName == null) ? 0 : fileName.hashCode());
+		result = prime * result + (isPossibleAttackVector ? 1231 : 1237);
+		result = prime * result + line;
 		result = prime * result
 				+ ((location == null) ? 0 : location.hashCode());
-		result = prime * result + (modifiesChild ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((relativePath == null) ? 0 : relativePath.hashCode());
 		result = prime * result + type;
 		return result;
 	}
@@ -143,6 +184,10 @@ public class DataObject
 		}
 		else if (!fileName.equals(other.fileName))
 			return false;
+		if (isPossibleAttackVector != other.isPossibleAttackVector)
+			return false;
+		if (line != other.line)
+			return false;
 		if (location == null)
 		{
 			if (other.location != null)
@@ -150,14 +195,19 @@ public class DataObject
 		}
 		else if (!location.equals(other.location))
 			return false;
-		if (modifiesChild != other.modifiesChild)
-			return false;
 		if (name == null)
 		{
 			if (other.name != null)
 				return false;
 		}
 		else if (!name.equals(other.name))
+			return false;
+		if (relativePath == null)
+		{
+			if (other.relativePath != null)
+				return false;
+		}
+		else if (!relativePath.equals(other.relativePath))
 			return false;
 		if (type != other.type)
 			return false;
@@ -172,11 +222,16 @@ public class DataObject
 	@Override
 	public String toString()
 	{
-		return "DataObject [type=" + type + ", "
+		return "DataObject [type="
+				+ type
+				+ ", "
 				+ (name != null ? "name=" + name + ", " : "")
+				+ (relativePath != null ? "relativePath=" + relativePath + ", "
+						: "")
 				+ (fileName != null ? "fileName=" + fileName + ", " : "")
+				+ "line=" + line + ", "
 				+ (location != null ? "location=" + location + ", " : "")
-				+ "modifiesChild=" + modifiesChild + "]";
+				+ "isPossibleAttackVector=" + isPossibleAttackVector + "]";
 	}
 
 }

@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 
 import com.gregtam.scanner.graph.GraphConstants.RelType;
 import com.gregtam.scanner.model.DataObject;
-import com.gregtam.scanner.util.ValidationUtil;
 
 public class GraphUtil
 {
@@ -15,7 +14,7 @@ public class GraphUtil
 	{
 		if (d != null)
 		{
-			return createKey(d.getType(), d.getName());
+			return createKey(d.getType(), d);
 		}
 
 		return "";
@@ -26,32 +25,10 @@ public class GraphUtil
 	{
 		if (parent != null && child != null)
 		{
-			if (parent.getType() == child.getType())
+			String key = createRelationshipKey(parent, child);
+			if (GraphConstants.relationshipMap.containsKey(key))
 			{
-				logger.debug("same type, no relationship");
-				return null;
-			}
-			else
-			{
-
-				if (parent.getType() < child.getType())
-				{
-					// correct format
-				}
-				else
-				{
-					logger.debug("wrong order, switching");
-
-					DataObject temp = child;
-					child = parent;
-					parent = temp;
-				}
-
-				String key = createRelationshipKey(parent, child);
-				if (GraphConstants.relationshipMap.containsKey(key))
-				{
-					return GraphConstants.relationshipMap.get(key);
-				}
+				return GraphConstants.relationshipMap.get(key);
 			}
 		}
 		return null;
@@ -65,51 +42,63 @@ public class GraphUtil
 		sb.append(parent.getType());
 		sb.append(child.getType());
 
-		if (child.getType() == GraphConstants.TYPE_VARIABLE)
-		{
-			sb.append(GraphConstants.KEY_DELIMITER);
-			if (child.isModify())
-			{
-				sb.append("1");
-			}
-			else
-			{
-				sb.append("0");
-			}
-		}
-
 		return sb.toString();
 	}
 
-	public static String createKey(int type, String name)
+	public static String createKey(int type, DataObject dObj)
 	{
 		StringBuilder sb = new StringBuilder();
 
-		if (ValidationUtil.isNotNullAndEmpty(name))
+		if (dObj != null)
 		{
 			switch (type)
 			{
 			case GraphConstants.TYPE_DIRECTORY:
 				sb.append(GraphConstants.TAG_DIRECTORY);
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getRelativePath());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getName());
 				break;
 			case GraphConstants.TYPE_FILE:
 				sb.append(GraphConstants.TAG_FILE);
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getRelativePath());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getName());
 				break;
 			case GraphConstants.TYPE_CLASS:
 				sb.append(GraphConstants.TAG_CLASS);
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getRelativePath());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getFileName());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getName());
 				break;
 			case GraphConstants.TYPE_FUNCTION:
 				sb.append(GraphConstants.TAG_FUNCTION);
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getRelativePath());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getFileName());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getName());
 				break;
 			case GraphConstants.TYPE_VARIABLE:
 				sb.append(GraphConstants.TAG_VARIABLE);
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getRelativePath());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getFileName());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getLine());
+				sb.append(GraphConstants.KEY_DELIMITER);
+				sb.append(dObj.getName());
 				break;
 			default:
 
 			}
-
-			sb.append(GraphConstants.KEY_DELIMITER);
-			sb.append(name);
 		}
 
 		return sb.toString();

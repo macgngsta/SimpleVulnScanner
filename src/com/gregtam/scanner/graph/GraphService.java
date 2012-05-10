@@ -96,6 +96,39 @@ public class GraphService
 		node.setProperty(GraphConstants.KEY_NAME, key);
 		nodeIndex.add(node, GraphConstants.KEY_NAME, key);
 
+		int type = d.getType();
+
+		switch (type)
+		{
+		case GraphConstants.TYPE_DIRECTORY:
+			break;
+		case GraphConstants.TYPE_FILE:
+			break;
+		case GraphConstants.TYPE_CLASS:
+			node.setProperty(GraphConstants.PROP_FILENAME, d.getFileName());
+			node.setProperty(GraphConstants.PROP_LINE, d.getLine());
+			node.setProperty(GraphConstants.PROP_LOCATION, d.getLocation());
+			break;
+		case GraphConstants.TYPE_FUNCTION:
+			node.setProperty(GraphConstants.PROP_FILENAME, d.getFileName());
+			node.setProperty(GraphConstants.PROP_LINE, d.getLine());
+			node.setProperty(GraphConstants.PROP_LOCATION, d.getLocation());
+			break;
+		case GraphConstants.TYPE_VARIABLE:
+			node.setProperty(GraphConstants.PROP_FILENAME, d.getFileName());
+			node.setProperty(GraphConstants.PROP_LINE, d.getLine());
+			node.setProperty(GraphConstants.PROP_LOCATION, d.getLocation());
+			node.setProperty(GraphConstants.PROP_ATTACK_VECTOR,
+					d.isPossibleAttackVector());
+			break;
+		default:
+		}
+
+		// global set
+		node.setProperty(GraphConstants.PROP_TYPE, type);
+		node.setProperty(GraphConstants.PROP_RELPATH, d.getRelativePath());
+		node.setProperty(GraphConstants.PROP_NAME, d.getName());
+
 		return node;
 	}
 
