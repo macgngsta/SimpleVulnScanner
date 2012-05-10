@@ -6,18 +6,14 @@ import java.util.List;
 
 import org.antlr.runtime.tree.CommonTree;
 
-import com.gregtam.scanner.graph.GraphConstants;
-import com.gregtam.scanner.graph.GraphProcessor;
-import com.gregtam.scanner.model.DataNode;
 import com.gregtam.scanner.model.MetaData;
-import com.gregtam.scanner.php.PhpDataNodeBuilder;
 import com.gregtam.scanner.util.ValidationUtil;
 
-public class FunctionTask extends AbstractTask
+public class FunctionParamTask extends AbstractTask
 {
-	public static final List<String> SEARCH_TOKENS = Arrays.asList("function");
+	public static final List<String> SEARCH_TOKENS = Arrays.asList("Params");
 
-	public FunctionTask(CommonTree t, MetaData m)
+	public FunctionParamTask(CommonTree t, MetaData m)
 	{
 		super(t, m);
 	}
@@ -33,17 +29,12 @@ public class FunctionTask extends AbstractTask
 		{
 			for (CommonTree t : results)
 			{
-
-				DataNode d = PhpDataNodeBuilder.buildDataNode(t, meta,
-						GraphConstants.TYPE_FUNCTION);
-				GraphProcessor.getInstance().addDataNode(d);
-
 				try
 				{
 					MetaData mMeta = (MetaData) meta.clone();
-					mMeta.setFunctionName(d.getFunctionName());
+					mMeta.setModifier(true);
 
-					FunctionParamTask svt = new FunctionParamTask(t, mMeta);
+					SessionVariableTask svt = new SessionVariableTask(t, mMeta);
 					svt.process();
 				}
 				catch (CloneNotSupportedException e)
@@ -53,9 +44,6 @@ public class FunctionTask extends AbstractTask
 
 			}
 		}
-		// set the next task as a new one of
-		setNextTask(new ApplyTask(prunedTree, this.meta));
-
 		next();
 	}
 }

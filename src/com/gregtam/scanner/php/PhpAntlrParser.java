@@ -64,6 +64,8 @@ public class PhpAntlrParser
 
 					CommonTree fullTree = (CommonTree) content.getTree();
 
+					printTree(fullTree, 1);
+
 					MetaData m = new MetaData();
 					// populate with relevent data
 					m.setFileName(fo.getName());
@@ -348,6 +350,24 @@ public class PhpAntlrParser
 			for (int i = 0; i < t.getChildCount(); i++)
 			{
 				parseTree((CommonTree) t.getChild(i));
+			}
+		}
+	}
+
+	private void printTree(CommonTree t, int indent)
+	{
+		if (t != null)
+		{
+			StringBuffer sb = new StringBuffer(indent);
+
+			for (int i = 0; i < indent; i++)
+				sb = sb.append("   ");
+
+			for (int i = 0; i < t.getChildCount(); i++)
+			{
+				logger.debug((sb.toString() + t.getChild(i).toString()));
+
+				printTree((CommonTree) t.getChild(i), indent + 2);
 			}
 		}
 	}

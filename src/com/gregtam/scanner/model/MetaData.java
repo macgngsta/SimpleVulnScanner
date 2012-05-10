@@ -8,8 +8,11 @@ public class MetaData implements Cloneable
 	private String relativePath;
 
 	private String fileName;
+	private String fileInclude;
+
 	private String className;
 	private String functionName;
+	private String functionCall;
 
 	private String variableName;
 
@@ -22,6 +25,28 @@ public class MetaData implements Cloneable
 		this.functionName = "";
 		this.variableName = "";
 		this.relativePath = "";
+		this.fileInclude = "";
+		this.functionCall = "";
+	}
+
+	public String getFileInclude()
+	{
+		return fileInclude;
+	}
+
+	public void setFileInclude(String fileInclude)
+	{
+		this.fileInclude = fileInclude;
+	}
+
+	public String getFunctionCall()
+	{
+		return functionCall;
+	}
+
+	public void setFunctionCall(String functionCall)
+	{
+		this.functionCall = functionCall;
 	}
 
 	public String getRelativePath()
@@ -102,7 +127,11 @@ public class MetaData implements Cloneable
 		result = prime * result
 				+ ((className == null) ? 0 : className.hashCode());
 		result = prime * result
+				+ ((fileInclude == null) ? 0 : fileInclude.hashCode());
+		result = prime * result
 				+ ((fileName == null) ? 0 : fileName.hashCode());
+		result = prime * result
+				+ ((functionCall == null) ? 0 : functionCall.hashCode());
 		result = prime * result
 				+ ((functionName == null) ? 0 : functionName.hashCode());
 		result = prime * result + (isModified ? 1231 : 1237);
@@ -131,12 +160,26 @@ public class MetaData implements Cloneable
 		}
 		else if (!className.equals(other.className))
 			return false;
+		if (fileInclude == null)
+		{
+			if (other.fileInclude != null)
+				return false;
+		}
+		else if (!fileInclude.equals(other.fileInclude))
+			return false;
 		if (fileName == null)
 		{
 			if (other.fileName != null)
 				return false;
 		}
 		else if (!fileName.equals(other.fileName))
+			return false;
+		if (functionCall == null)
+		{
+			if (other.functionCall != null)
+				return false;
+		}
+		else if (!functionCall.equals(other.functionCall))
 			return false;
 		if (functionName == null)
 		{
@@ -177,8 +220,12 @@ public class MetaData implements Cloneable
 				+ (relativePath != null ? "relativePath=" + relativePath + ", "
 						: "")
 				+ (fileName != null ? "fileName=" + fileName + ", " : "")
+				+ (fileInclude != null ? "fileInclude=" + fileInclude + ", "
+						: "")
 				+ (className != null ? "className=" + className + ", " : "")
 				+ (functionName != null ? "functionName=" + functionName + ", "
+						: "")
+				+ (functionCall != null ? "functionCall=" + functionCall + ", "
 						: "")
 				+ (variableName != null ? "variableName=" + variableName : "")
 				+ "]";

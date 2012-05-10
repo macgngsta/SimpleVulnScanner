@@ -13,11 +13,11 @@ import com.gregtam.scanner.model.MetaData;
 import com.gregtam.scanner.php.PhpDataNodeBuilder;
 import com.gregtam.scanner.util.ValidationUtil;
 
-public class FunctionTask extends AbstractTask
+public class ApplyTask extends AbstractTask
 {
-	public static final List<String> SEARCH_TOKENS = Arrays.asList("function");
+	public static final List<String> SEARCH_TOKENS = Arrays.asList("Apply");
 
-	public FunctionTask(CommonTree t, MetaData m)
+	public ApplyTask(CommonTree t, MetaData m)
 	{
 		super(t, m);
 	}
@@ -35,15 +35,15 @@ public class FunctionTask extends AbstractTask
 			{
 
 				DataNode d = PhpDataNodeBuilder.buildDataNode(t, meta,
-						GraphConstants.TYPE_FUNCTION);
+						GraphConstants.TYPE_FUNCTION_CALL);
 				GraphProcessor.getInstance().addDataNode(d);
 
 				try
 				{
 					MetaData mMeta = (MetaData) meta.clone();
-					mMeta.setFunctionName(d.getFunctionName());
+					mMeta.setFunctionCall(d.getFunctionCall());
 
-					FunctionParamTask svt = new FunctionParamTask(t, mMeta);
+					OperatorTask svt = new OperatorTask(t, mMeta);
 					svt.process();
 				}
 				catch (CloneNotSupportedException e)
@@ -54,7 +54,7 @@ public class FunctionTask extends AbstractTask
 			}
 		}
 		// set the next task as a new one of
-		setNextTask(new ApplyTask(prunedTree, this.meta));
+		setNextTask(new OperatorTask(prunedTree, this.meta));
 
 		next();
 	}

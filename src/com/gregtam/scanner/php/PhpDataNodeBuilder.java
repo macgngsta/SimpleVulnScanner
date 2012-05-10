@@ -13,6 +13,10 @@ public class PhpDataNodeBuilder
 
 	}
 
+	// tasks in this order
+	// Includes -> Class ->Function ->FunctionParamTask -> SessionVariableTask -> VariableTask
+	//                                       |-> ApplyTask -> OperatorTask -> SessionVariableTask -> VariableTask
+
 	public static DataNode buildDataNode(CommonTree t, MetaData meta, int type)
 	{
 		DataNode dNode = new DataNode();
@@ -25,8 +29,7 @@ public class PhpDataNodeBuilder
 
 		case GraphConstants.TYPE_FILE_INCLUDE:
 			dNode.setFileName(meta.getFileName());
-			// TODO: fix this
-			dNode.setFileName(getOneLevel(t));
+			dNode.setFileInclude(getOneLevel(t));
 			break;
 
 		case GraphConstants.TYPE_FILE:
@@ -42,6 +45,11 @@ public class PhpDataNodeBuilder
 			dNode.setFileName(meta.getFileName());
 
 			dNode.setFunctionName(getOneLevel(t));
+			break;
+		case GraphConstants.TYPE_FUNCTION_CALL:
+			dNode.setClassName(meta.getClassName());
+			dNode.setFileName(meta.getFileName());
+			dNode.setFunctionCall(getOneLevel(t));
 			break;
 		case GraphConstants.TYPE_VARIABLE:
 			// set the var name

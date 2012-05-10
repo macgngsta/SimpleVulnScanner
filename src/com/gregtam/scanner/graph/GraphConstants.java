@@ -82,6 +82,7 @@ public class GraphConstants
 	public static final int TYPE_VARIABLE = 5;
 	public static final int TYPE_FILE_INCLUDE = 6;
 	public static final int TYPE_OPERATOR = 7;
+	public static final int TYPE_FUNCTION_CALL = 8;
 
 	public static final String TAG_PROJECT = "proj";
 	public static final String TAG_DIRECTORY = "dir";
