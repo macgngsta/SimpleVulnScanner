@@ -1,15 +1,39 @@
-# Simple Vulnerability Scanner (v0.0.1)
+INTRODUCTION
+----------------------
+As part of my Masters program at Poly NYU, I ended up taking a penetration testing and vulnerability analysis class.
 
-This idea was the result of having to complete a final project for Penetration Testing and Vulnerability Analysis.
+This is the final project. 
 
-The concept is simple, take a folder full of code and perform static analysis to find security vulnerabilities.
+Originally the idea was to look for vulnerabilities in WordPress plugins. Dan Guido (http://pentest.cryptocity.net/final-project/) suggested that I look into automating searching for vulnerabilities across a large dataset of plugins.
 
-The scope of this project will be pretty narrow. I'm going to specifically focus on SQL injection and operate with the language php and examine for the majority Wordpress Plugins.
+I thought about it further and realized that to automate the searching for vulnerabilities would require some sort of framework to perform competitive tasks. There are probably 2 ways to automate searching for vulnerabilties; static or dynamic. I didn't really want to go with the dynamic route as it would be difficult to scale, verify vulnerabilties, and where would one start? I decided that the automation would be on static analysis of the code.
 
-The workflow:
-* read in the folder of code
-* run through all the code/files and update relationships in a graph database (neo4j)
-* run queries on the database looking for specific signatures
-* print a report of all findings
 
-http://pentest.cryptocity.net/
+PROBLEM
+----------------------
+At first, it felt like it would be a walk in the park, I've programmed some PHP in my days and there are a few key surface attack areas, anywhere they use $_POST[] or $_GET[] would be juicy targets and there are the simple mysql calls that are made in include classes. 
+
+I figured that a simple SQL injection vulnerability search workflow would be quite simple:
+
+Read in the code -> Process/Search/Grep the code for specifics -> Search for a SQL injection signature
+
+Reading in the code - that would be easy, I would write some Java classes to recurisively run through files and folders.
+
+Process/Search/Grep the code for specifics - this part would be difficult. I started to look around and google some sort of tool for static analysis of PHP, but I couldn't find anything. The best tool for vulnerabilties seem to be RIPS (http://sourceforge.net/projects/rips-scanner/), there were a couple of other ones namely, php-sat, PHP_CodeSniffer, PHPMD, PHPLint. But they all had something in common, they were all built to be run in PHP, there didnt seem to be anyways to extract the data they used to search for vulnerabilities. RIPS seemed nice, but being written in PHP, there were memory constraints, and you could only do so much.
+
+Search for a SQL injection signature - what is a signature? To me it is a representation of a path in a graph. Now looking at this previously mentioned tools, none of them provided an externalization of the code dependency graph, kind of what we see in IDA. 
+
+
+SOLUTION
+----------------------
+I would write some sort of framework to assist with reading PHP code, creating and externalizing a code dependency graph. Once I had a graph, I could run all sorts of machine learning algorithms or path-finding algorithms all day long.
+
+I ended up writing the solution in Java, as that is my native language. I contemplated writing a PHP parser, but it seemed like that would be re-inventing the wheel and wouldn't provide some of the advanced functionality, like tracking scope. I did find an open source project - ANTLR (www.antlr.org) which would make processing PHP code simple, and also allow the framework to branch into other languages if necessary. The other piece of the puzzle would be the dependency graph, it seemed like Neo4J (www.neo4j.org) would be a nice place to store graphs as it can be used as an external or embedded database that is optimized for graph traversal.
+
+TECHNOLOGY USED
+----------------------
+ANTLR (www.antlr.org) - ANother Tool for Language Recognition, is a language tool that provides a framework for constructing recognizers, interpreters, compilers, and translators from grammatical descriptions containing actions in a variety of target languages. 
+
+phpparser (http://code.google.com/p/phpparser/) - An ANTLR grammar for parsing php source files written by Sidharth Kuruvila
+
+Neo4J (www.neo4j.org) - Neo4j is a high-performance, NOSQL graph database with all the features of a mature and robust database. The programmer works with an object-oriented, flexible network structure rather than with strict and static tables Ñ yet enjoys all the benefits of a fully transactional, enterprise-strength database. For many applications, Neo4j offers performance improvements on the order of 1000x or more compared to relational DBs.
