@@ -14,8 +14,9 @@ public class PhpDataNodeBuilder
 	}
 
 	// tasks in this order
-	// Includes -> Class ->Function ->FunctionParamTask -> SessionVariableTask -> VariableTask
-	//                                       |-> ApplyTask -> OperatorTask -> SessionVariableTask -> VariableTask
+	// Includes -> Class ->Function ->FunctionParamTask -> SessionVariableTask
+	// -> VariableTask
+	// |-> ApplyTask -> OperatorTask -> SessionVariableTask -> VariableTask
 
 	public static DataNode buildDataNode(CommonTree t, MetaData meta, int type)
 	{
@@ -39,17 +40,23 @@ public class PhpDataNodeBuilder
 
 			dNode.setClassName(getOneLevel(t));
 			dNode.setFileName(meta.getFileName());
+			dNode.setLine(t.getLine());
+			dNode.setLocation(Integer.toString(t.getCharPositionInLine()));
 			break;
 		case GraphConstants.TYPE_FUNCTION:
 			dNode.setClassName(meta.getClassName());
 			dNode.setFileName(meta.getFileName());
 
 			dNode.setFunctionName(getOneLevel(t));
+			dNode.setLine(t.getLine());
+			dNode.setLocation(Integer.toString(t.getCharPositionInLine()));
 			break;
 		case GraphConstants.TYPE_FUNCTION_CALL:
 			dNode.setClassName(meta.getClassName());
 			dNode.setFileName(meta.getFileName());
 			dNode.setFunctionCall(getOneLevel(t));
+			dNode.setLine(t.getLine());
+			dNode.setLocation(Integer.toString(t.getCharPositionInLine()));
 			break;
 		case GraphConstants.TYPE_VARIABLE:
 			// set the var name
@@ -61,6 +68,7 @@ public class PhpDataNodeBuilder
 			dNode.setFileName(meta.getFileName());
 			dNode.setFunctionName(meta.getFunctionName());
 			dNode.setLine(t.getLine());
+			dNode.setLocation(Integer.toString(t.getCharPositionInLine()));
 			dNode.setModified(meta.isModified());
 			dNode.setModifier(meta.isModifier());
 

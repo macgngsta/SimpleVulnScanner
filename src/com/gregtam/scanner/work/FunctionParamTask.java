@@ -22,7 +22,7 @@ public class FunctionParamTask extends AbstractTask
 	{
 
 		List<CommonTree> results = new ArrayList<CommonTree>();
-		CommonTree prunedTree = pruneByToken(pTree, 0, results, SEARCH_TOKENS);
+		pruneByToken(pTree, 0, results, SEARCH_TOKENS);
 
 		// do something
 		if (ValidationUtil.isNotNullAndEmpty(results))

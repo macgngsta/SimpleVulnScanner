@@ -8,17 +8,41 @@ import org.apache.log4j.Logger;
 
 import com.gregtam.scanner.ScannerConstants;
 import com.gregtam.scanner.model.FileObject;
-import com.gregtam.scanner.php.PhpUtil;
+import com.gregtam.scanner.php.PhpConstants;
 import com.gregtam.scanner.util.ValidationUtil;
 
 public class FileUtil
 {
 	static Logger logger = Logger.getLogger(FileUtil.class.getName());
 	private String rootPath;
+	private File rootFile;
 
 	public FileUtil()
 	{
 		this.rootPath = "";
+		this.rootFile = null;
+	}
+
+	public File getRootFile()
+	{
+		return rootFile;
+	}
+
+	public void setRootFile(File rootFile)
+	{
+		this.rootFile = rootFile;
+	}
+
+	public FileUtil(String rootPath)
+	{
+		this.rootPath = rootPath;
+		this.rootFile = openFile(rootPath);
+	}
+
+	private File openFile(String path)
+	{
+		File rootFile = new File(path);
+		return rootFile;
 	}
 
 	public List<FileObject> getAllFiles(String filePath)
@@ -27,8 +51,6 @@ public class FileUtil
 
 		if (ValidationUtil.isNotNullAndEmpty(filePath))
 		{
-			File rootFile = new File(filePath);
-
 			this.rootPath = rootFile.getAbsolutePath();
 
 			readFile(rootFile, myFiles);
@@ -69,7 +91,7 @@ public class FileUtil
 				String name = testFile.getName();
 				String ext = FileUtil.getExtension(testFile);
 
-				if (PhpUtil.isCode(ext))
+				if (isCode(ext))
 				{
 					FileObject fo = new FileObject(absPath, path, name, ext);
 					myList.add(fo);
@@ -110,4 +132,17 @@ public class FileUtil
 		return sb.toString();
 	}
 
+	public static boolean isCode(String extension)
+	{
+		boolean isCode = false;
+
+		if (ValidationUtil.isNotNullAndEmpty(extension))
+		{
+			String lower = extension.toLowerCase();
+
+			isCode = PhpConstants.validExtentions.contains(lower);
+		}
+
+		return isCode;
+	}
 }

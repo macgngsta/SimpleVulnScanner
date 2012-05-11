@@ -23,28 +23,31 @@ public class GraphConstants
 		relationshipMap.put("12", RelType.CONTAINS);
 
 		// file -> class
-		relationshipMap.put("23", RelType.IMPLEMENTS);
+		relationshipMap.put("23", RelType.CONTAINS);
 
 		// file -> function
-		relationshipMap.put("24", RelType.DECLARES);
+		relationshipMap.put("24", RelType.CONTAINS);
 
 		// file -> variable
-		relationshipMap.put("25", RelType.USES);
+		relationshipMap.put("25", RelType.CONTAINS);
 
 		// class -> class
-		relationshipMap.put("33", RelType.USES);
+		relationshipMap.put("33", RelType.CONTAINS);
 
 		// class -> function
-		relationshipMap.put("34", RelType.DECLARES);
+		relationshipMap.put("34", RelType.CONTAINS);
 
 		// class -> variable
-		relationshipMap.put("35", RelType.USES);
+		relationshipMap.put("35", RelType.CONTAINS);
 
 		// function -> function
-		relationshipMap.put("44", RelType.USES);
+		relationshipMap.put("44", RelType.CONTAINS);
 
 		// function -> variable
-		relationshipMap.put("45", RelType.USES);
+		relationshipMap.put("45", RelType.CONTAINS);
+
+		// variable -> function
+		relationshipMap.put("54", RelType.MODIFIES);
 
 		// variable -> variable
 		relationshipMap.put("55", RelType.MODIFIES);
@@ -53,25 +56,29 @@ public class GraphConstants
 
 	public static enum RelType implements RelationshipType
 	{
-		CONTAINS, IMPLEMENTS, DECLARES, MODIFIES, USES
+		CONTAINS, USES, MODIFIES
 	}
 
-	// project CONTAINS
-	// directory CONTAINS
-	// a file IMPLEMENTS
-	// class DECLARES
-	// function MODIFIES, USES
-	// variable
-
 	// track the name
-	public static final String KEY_NAME = "fullname";
+	public static final String KEY_NAME = "nodeKey";
+
 	public static final String PROP_TYPE = "type";
 	public static final String PROP_RELPATH = "relpath";
 	public static final String PROP_FILENAME = "file";
-	public static final String PROP_NAME = "name";
+
+	public static final String PROP_CLASS_NAME = "className";
+	public static final String PROP_FUNCTION_NAME = "functionName";
+	public static final String PROP_VARIABLE_NAME = "variableName";
+
 	public static final String PROP_LINE = "line";
 	public static final String PROP_LOCATION = "location";
-	public static final String PROP_ATTACK_VECTOR = "attack";
+
+	public static final String PROP_ATTACK_VECTOR = "surface";
+
+	// this is the case when we create a node based on another node
+	// because it doesnt exist yet.
+	// we want to make sure to come back and populate the properties
+	public static final String PROP_IS_TOUCHED = "isTouched";
 
 	public static final int TYPE_INVALID = -1;
 	public static final int TYPE_PROJECT = 0;
@@ -80,17 +87,18 @@ public class GraphConstants
 	public static final int TYPE_CLASS = 3;
 	public static final int TYPE_FUNCTION = 4;
 	public static final int TYPE_VARIABLE = 5;
+
+	// relationships
 	public static final int TYPE_FILE_INCLUDE = 6;
 	public static final int TYPE_OPERATOR = 7;
 	public static final int TYPE_FUNCTION_CALL = 8;
 
-	public static final String TAG_PROJECT = "proj";
-	public static final String TAG_DIRECTORY = "dir";
-	public static final String TAG_FILE = "file";
-	public static final String TAG_CLASS = "class";
-	public static final String TAG_FUNCTION = "func";
-	public static final String TAG_VARIABLE = "var";
+	public static final String TAG_DIRECTORY = "d";
+	public static final String TAG_FILE = "f";
+	public static final String TAG_CLASS = "c";
+	public static final String TAG_FUNCTION = "m";
+	public static final String TAG_VARIABLE = "v";
 
-	public static final String KEY_DELIMITER = "_";
+	public static final String KEY_DELIMITER = "+";
 
 }

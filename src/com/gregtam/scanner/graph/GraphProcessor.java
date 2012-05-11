@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gregtam.scanner.model.DataNode;
-import com.gregtam.scanner.model.DataObject;
 import com.gregtam.scanner.util.ValidationUtil;
 
 public class GraphProcessor
@@ -30,6 +29,16 @@ public class GraphProcessor
 		return _instance;
 	}
 
+	public List<DataNode> getDataNodes()
+	{
+		return dataNodes;
+	}
+
+	public void setDataNodes(List<DataNode> dataNodes)
+	{
+		this.dataNodes = dataNodes;
+	}
+
 	public void addDataNode(DataNode d)
 	{
 		if (d != null)
@@ -41,13 +50,13 @@ public class GraphProcessor
 		}
 	}
 
-	public void processDataList(List<DataObject> myData)
+	public void removeDataNode(DataNode d)
 	{
-		if (ValidationUtil.isNotNullAndEmpty(myData))
+		if (d != null)
 		{
-			for (DataObject dObj : myData)
+			if (this.dataNodes.contains(d))
 			{
-				logger.debug(dObj);
+				this.dataNodes.remove(d);
 			}
 		}
 	}
