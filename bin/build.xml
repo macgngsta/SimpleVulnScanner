@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="Simple Vulnerability Scanner" default="dist">
+	<!-- 
+===============================================================================
+                                Property 
+===============================================================================
+ -->
+	<property file="build.properties" />
+	<property name="jar.file" value="${jar.file.name}.jar" />
+
+	<!-- 
+===============================================================================
+                                ClassPath
+===============================================================================
+-->
+	<path id="class.path">
+		<!-- load the common model jar first to avoid any conflict -->
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+		<pathelement path="${build.dir}" />
+	</path>
+	<!-- 
+===============================================================================
+                                Init
+===============================================================================
+-->
+	<!-- Targets for this build -->
+	<target name="init">
+		<tstamp />
+		<!-- this deletes all building elements -->
+		<delete dir="${tmp.dir}" />
+		<delete dir="${deploy.dir}" />
+		
+		<delete dir="${appinf.dir}" />
+		<mkdir dir="${tmp.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${staging.dir}" />
+	</target>
+	<!-- 
+===============================================================================
+                               Compile
+===============================================================================
+-->
+	<target name="compile" depends="init" description="compile the source">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="class.path" debug="${javac.debug}" deprecation="${javac.deprecation}" nowarn="${javac.nowarn}" includeantruntime="false" />
+	</target>
+
+	<!-- 
+===============================================================================
+                               CompileLocal
+===============================================================================
+-->
+
+	<target name="compilelocal" depends="init">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="class.path" debug="${javac.debug}" deprecation="${javac.deprecation}" nowarn="${javac.nowarn}" includeantruntime="false" />
+
+		<copy todir="${build.dir}">
+			<fileset dir="${frameworkprops.dir}">
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+
+		<jar destfile="${deploy.dir}/${localjar.name}" basedir="${build.dir}" />
+
+	</target>
+
+
+	<!-- 
+===============================================================================
+                               Copy
+===============================================================================
+-->
+	<target name="copy" description="Copy resource files to output directory" depends="init">
+		<patternset id="copy.patterns">
+			<include name="**/*.gif" />
+			<include name="**/*.jpg" />
+			<include name="**/*.jpeg" />
+			<include name="**/*.png" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="**/*-apf.xml" />
+			<include name="**/*.ejx" />
+			<include name="**/*.xcfg" />
+			<include name="**/*.cpx" />
+			<include name="**/*.dcx" />
+			<include name="**/*.wsdl" />
+			<include name="**/*.ini" />
+			<include name="**/*.tld" />
+			<include name="**/*.tag" />
+			<include name="**/*.xsl" />
+			<include name="**/*.ftl" />
+		</patternset>
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+				<patternset refid="copy.patterns" />
+				<exclude name="**/WEB-INF/web.xml" />
+				<exclude name="**/META-INF/application.xml" />
+			</fileset>
+		</copy>
+	</target>
+	<!-- 
+===============================================================================
+                               Distribution
+===============================================================================
+-->
+	<target name="dist" depends="init">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="class.path" debug="${javac.debug}" deprecation="${javac.deprecation}" nowarn="${javac.nowarn}" includeantruntime="false" />
+
+		<copy todir="${build.dir}">
+			<fileset dir="${frameworkprops.dir}">
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+
+		<jar destfile="${deploy.dir}/${localjar.name}" basedir="${build.dir}" />
+
+		<delete dir="${tmp.dir}" />
+	</target>
+
+</project>

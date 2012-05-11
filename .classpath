@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="properties"/>
+	<classpathentry excluding="grammar/" kind="src" path="properties"/>
+	<classpathentry kind="src" path="properties/grammar"/>
+	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/antlr-3.4-complete-no-antlrv2.jar"/>
 	<classpathentry kind="lib" path="lib/phpParser.jar"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="lib" path="lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-3.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/neo4j-cypher-1.8.M01.jar"/>
+	<classpathentry kind="lib" path="lib/neo4j-graph-algo-1.8.M01.jar"/>
+	<classpathentry kind="lib" path="lib/neo4j-graph-matching-1.8.M01.jar"/>
+	<classpathentry kind="lib" path="lib/neo4j-jmx-1.8.M01.jar"/>
+	<classpathentry kind="lib" path="lib/neo4j-kernel-1.8.M01.jar"/>
+	<classpathentry kind="lib" path="lib/neo4j-lucene-index-1.8.M01.jar"/>
+	<classpathentry kind="lib" path="lib/neo4j-shell-1.8.M01.jar"/>
+	<classpathentry kind="lib" path="lib/neo4j-udc-1.8.M01.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar"/>
+	<classpathentry kind="lib" path="lib/scala-library-2.9.1-1.jar"/>
+	<classpathentry kind="lib" path="lib/server-api-1.8.M01.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
