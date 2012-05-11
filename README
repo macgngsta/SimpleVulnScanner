@@ -30,6 +30,18 @@ I would write some sort of framework to assist with reading PHP code, creating a
 
 I ended up writing the solution in Java, as that is my native language. I contemplated writing a PHP parser, but it seemed like that would be re-inventing the wheel and wouldn't provide some of the advanced functionality, like tracking scope. I did find an open source project - ANTLR (www.antlr.org) which would make processing PHP code simple, and also allow the framework to branch into other languages if necessary. The other piece of the puzzle would be the dependency graph, it seemed like Neo4J (www.neo4j.org) would be a nice place to store graphs as it can be used as an external or embedded database that is optimized for graph traversal.
 
+USAGE
+----------------------
+To Clone
+$ git clone git@github.com:macgngsta/SimpleVulnScanner.git
+
+To Build
+$ cd SimpleVulnScanner/resources
+$ ant build
+
+To Run
+$ java -jar deploy/simpleVulnScanner.jar [path/to/Target]
+
 TECHNOLOGY USED
 ----------------------
 ANTLR (www.antlr.org) - ANother Tool for Language Recognition, is a language tool that provides a framework for constructing recognizers, interpreters, compilers, and translators from grammatical descriptions containing actions in a variety of target languages. 
