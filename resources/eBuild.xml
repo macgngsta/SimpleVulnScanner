@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project SimpleVulnScanner">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/Users/gtam/Documents/development/SimpleVulnScanner/build/SimpleVulnScanner.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="com.gregtam.scanner.SimpleVulnerabilityScanner"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/Users/gtam/Documents/development/SimpleVulnScanner/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/antlr-3.4-complete-no-antlrv2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/phpParser.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/log4j-1.2.16.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/lucene-core-3.5.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/neo4j-cypher-1.8.M01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/neo4j-graph-algo-1.8.M01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/neo4j-graph-matching-1.8.M01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/neo4j-jmx-1.8.M01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/neo4j-kernel-1.8.M01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/neo4j-lucene-index-1.8.M01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/neo4j-shell-1.8.M01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/neo4j-udc-1.8.M01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/scala-library-2.9.1-1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/Users/gtam/Documents/development/SimpleVulnScanner/lib/server-api-1.8.M01.jar"/>
+        </jar>
+    </target>
+</project>
